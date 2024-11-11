@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
     @Id
-    private  long id;
+    private long id;
     @Column(name = "user_name")
     private  String name;
     @Column(name = "possible_payments")

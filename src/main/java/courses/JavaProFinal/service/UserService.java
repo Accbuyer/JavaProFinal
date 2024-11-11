@@ -31,15 +31,21 @@ public class UserService {
 
     @Transactional
     public void deleteUser(long userId) {
-        User user = userRepository.findById( userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        userRepository.delete(user);
+        userRepository.findById( userId)
+                .orElseGet(() -> {
+                    User newUser = new User(userId, "NewUser");
+                    return userRepository.save(newUser);
+                });
+        userRepository.deleteById(userId);
     }
 
     @Transactional
     public void updateUser(long userId, User updatedUser) {
         User user = userRepository.findById( userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseGet(() -> {
+                    User newUser = new User(userId, "NewUser");
+                    return userRepository.save(newUser);
+                });
         user.setName(updatedUser.getName());
         user.setPossiblePayments(updatedUser.getPossiblePayments());
         userRepository.save(user);
@@ -60,10 +66,21 @@ public class UserService {
     @Transactional
     public void pay(long userId, long amount) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseGet(() -> {
+                    User newUser = new User(userId, "NewUser");
+                    return userRepository.save(newUser);
+                });
         if (user.getPossiblePayments() < amount) {
             throw new IllegalArgumentException("Insufficient funds");
         }
         user.setPossiblePayments(user.getPossiblePayments() - amount);
+    }
+
+    @Transactional
+    public void rollbackPay(long userId, long amount) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setPossiblePayments(user.getPossiblePayments() + amount);
     }
 }

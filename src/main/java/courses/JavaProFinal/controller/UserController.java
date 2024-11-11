@@ -1,5 +1,6 @@
 package courses.JavaProFinal.controller;
 
+import courses.JavaProFinal.dto.UserDTO;
 import courses.JavaProFinal.entity.User;
 import courses.JavaProFinal.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public void createUser(@RequestBody User user) {
+    public void createUser(@RequestBody UserDTO userDTO) {
+        User user = new User();
+        user.setId(userDTO.getId());
+        user.setName(userDTO.getName());
         userService.saveUser(user);
     }
 
@@ -33,6 +37,11 @@ public class UserController {
     @GetMapping("/pay/{userId}/{amount}")
     public void pay(@PathVariable long userId, @PathVariable long amount) {
         userService.pay(userId, amount);
+    }
+
+    @GetMapping("/rollback/{userId}/{amount}")
+    public void rollbackPay(@PathVariable long userId, @PathVariable long amount) {
+        userService.rollbackPay(userId, amount);
     }
 
     @PutMapping("/{userId}")
