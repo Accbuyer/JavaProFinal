@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/JavaPro?currentSchema=final
+    username: postgres
+    password: admin
+
+flyway:
+  locations: classpath:db/migration
+  baselineOnMigrate: false
+  logLevel: debug
